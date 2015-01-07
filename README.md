@@ -1,30 +1,14 @@
 # Robotlegs 2.2.1
 
-Robotlegs is an ActionScript application framework for Flash and Flex. It offers:
+The example applciation will help you to development flex application using Robotlegs 2.2.1 framework.
 
-+ Dependency injection
-+ Module management
-+ Command management
-+ View management
-+ Plug-and-play extensions
-
-## Download
-
-http://www.robotlegs.org/
-
-# Quickstart
+Please refer to http://www.robotlegs.org/ for downloading and to know more features.
 
 ## Adding Context to Main App page.
 
-To create a Robotlegs application or module you need to instantiate a Context. A context won't do much without some configuration.
+The configuration wiill added in the main applciation. MVCSBundle is added for installing commonly used extends and configured at ContextMain.as
 
-We install the MVCSBundle, which in turn installs a number of commonly used Extensions. We then add some custom application configurations.
-
-We pass the instance "this" through as the "contextView" which is required by many of the view related extensions. It must be installed after the bundle or it won't be processed. Also, it should always be added as the final configuration as it may trigger context initialization.
-
-Note: You must hold on to the context instance or it will be garbage collected.
-
-Flex:
+AppMain.mxml
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -68,11 +52,11 @@ Flex:
 
 ```
 
-## Context Initialization
+## Configuration
 
-If a ContextView is provided the Context is automatically initialized when the supplied view lands on stage. Be sure to install the ContextView last, as it may trigger context initialization.
+All the classes like Commonds, Mediators, Singletons etc will be registered here for depency injection and event mapping.
 
-If a ContextView is not supplied then the Context must be manually initialized.
+ContextMain.as
 
 ```as3
 package com.ravi.examples.mvc.context
@@ -129,7 +113,12 @@ package com.ravi.examples.mvc.context
 }
 
 ```
+
 ## AbstractConfigure
+
+This helps in seperating the common code for implementing Configuration. It extends Abtract class for dispatching events from its subclass and logging.
+
+AbstractConfigure.as
 
 ```as3
 package com.ravi.examples.mvc.common
@@ -166,7 +155,51 @@ package com.ravi.examples.mvc.common
 
 ```
 
+
+## Abstract Class
+
+This is helper class which is extended by other classes like commands abd model classes for dispatching events and log.
+
+AbstractClass.as
+
+```as3
+
+package com.ravi.examples.mvc.common
+{
+	import com.ravi.examples.mvc.utils.getLogger;
+	
+	import flash.events.Event;
+	import flash.events.IEventDispatcher;
+	
+	import mx.logging.ILogger;
+	
+	
+	public class AbstractClass
+	{
+		[Inject]
+		public var eventDispatcher:IEventDispatcher;
+		
+		public function get logger():ILogger
+		{
+			return getLogger(this);
+		}
+		
+		protected function dispatch(event:Event):void
+		{
+			if (eventDispatcher.hasEventListener(event.type))
+				eventDispatcher.dispatchEvent(event);
+		}
+	}
+}
+
+```
+
+
 ## Mediators
+
+Mediators plays major roles by seperating the logics from view classes. This will be responsible to registering all the events and dispatching events in the application life cycle.
+
+BooksViewMediator.as
 
 ```as3
 
@@ -253,6 +286,8 @@ package com.ravi.examples.mvc.view
 
 ```as3
 
+AbstractMediator.as
+
 package com.ravi.examples.mvc.common
 {
 	import com.ravi.examples.mvc.utils.getLogger;	
@@ -278,8 +313,37 @@ package com.ravi.examples.mvc.common
 
 ```
 
+BooksView.mxml:
+
+No script tags in mxml views. The will be registered to mediator in config file. Each view will have one mediator associated with view.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:parsley="http://www.spicefactory.org/parsley">
+	<s:DataGrid id="datagrid"
+				left="10"
+				right="10"
+				top="10"
+				bottom="10"/>
+
+	<s:controlBarContent>
+		<s:Button id="btnGetAuthors"
+				  label="Get Authors"/>
+		<s:Button id="btnGetBooks"
+				  label="Get Books"/>		
+	</s:controlBarContent>
+</s:Panel>
+
+```
 
 ## Command
+
+
+
+GetBookListCommand.as
 
 ```as3
 
@@ -351,6 +415,8 @@ package com.ravi.examples.mvc.commands
 
 ## Abstract Command
 
+AbstractCommand.as
+
 ```as3
 
 package com.ravi.examples.mvc.common
@@ -392,6 +458,8 @@ package com.ravi.examples.mvc.common
 
 
 ## Singleton
+
+AppModuleLocator.as
 
 ```as3
 
@@ -439,36 +507,3 @@ package com.ravi.examples.mvc.model
 
 ```
 
-## Abstract Class
-
-```as3
-
-package com.ravi.examples.mvc.common
-{
-	import com.ravi.examples.mvc.utils.getLogger;
-	
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
-	
-	import mx.logging.ILogger;
-	
-	
-	public class AbstractClass
-	{
-		[Inject]
-		public var eventDispatcher:IEventDispatcher;
-		
-		public function get logger():ILogger
-		{
-			return getLogger(this);
-		}
-		
-		protected function dispatch(event:Event):void
-		{
-			if (eventDispatcher.hasEventListener(event.type))
-				eventDispatcher.dispatchEvent(event);
-		}
-	}
-}
-
-```
