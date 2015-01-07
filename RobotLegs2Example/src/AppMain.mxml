@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:rl2="http://ns.robotlegs.org/flex/rl2"
+					   xmlns:mvcs="robotlegs.bender.bundles.mvcs.*"
+					   xmlns:context="com.ravi.examples.mvc.context.*"
+					   xmlns:view="com.ravi.examples.mvc.view.*"
+					   xmlns:utils="com.ravi.examples.mvc.utils.*">
+	<s:layout>
+		<s:VerticalLayout gap="10" paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10" />
+	</s:layout>
+	<fx:Style source="styles.css" />
+	<fx:Script>
+		<![CDATA[
+			import mx.logging.LogEventLevel;
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<rl2:ContextBuilder>
+			<mvcs:MVCSBundle/>
+			<context:ContextMain/>
+		</rl2:ContextBuilder>
+
+		<utils:EncriptApplicationLog filters="com.ravi.*"
+									 includeDate="true"
+									 includeTime="true"
+									 includeLevel="true"
+									 includeCategory="true"
+									 level="{LogEventLevel.ALL}"/>
+	</fx:Declarations>
+	
+	<s:Label 
+		x="10" y="30"
+		fontSize="36"
+		text="RobotLegs V2- MVC Framework"/>
+	<view:HomeView/>
+</s:WindowedApplication>
